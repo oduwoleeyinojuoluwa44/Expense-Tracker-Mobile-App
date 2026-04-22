@@ -1,16 +1,44 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import React from 'react';
-import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { useFonts as useInterFonts, Inter_400Regular, Inter_500Medium, Inter_700Bold, Inter_800ExtraBold } from '@expo-google-fonts/inter';
+import { useFonts as useManropeFonts, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { FIGMA } from '@/constants/figma';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
+  const [interLoaded] = useInterFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
+  const [manropeLoaded] = useManropeFonts({
+    Manrope_700Bold,
+    Manrope_800ExtraBold,
+  });
+
+  if (!interLoaded || !manropeLoaded) {
+    return null;
+  }
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <StatusBar style="light" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: FIGMA.colors.app },
+        }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="budgets" />
+        <Stack.Screen name="insights" />
+        <Stack.Screen name="ledgers" />
+        <Stack.Screen name="settings" />
+        <Stack.Screen name="add-transaction" />
+        <Stack.Screen name="security-verification" />
+      </Stack>
+    </SafeAreaProvider>
   );
 }
