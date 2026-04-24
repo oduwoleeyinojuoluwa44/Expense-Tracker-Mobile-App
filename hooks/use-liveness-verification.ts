@@ -5,21 +5,40 @@ import {
   hasAcceptableFaceCount,
   type LivenessChallenge,
 } from '@/lib/liveness';
-import { type RNMLKitFace, useFaceDetection } from '@infinitered/react-native-mlkit-face-detection';
+import type { RNMLKitFace } from '@infinitered/react-native-mlkit-face-detection';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import Constants from 'expo-constants';
 import { useMemo, useRef, useState } from 'react';
 
 const SNAPSHOT_INTERVAL_MS = 900;
 const CHALLENGE_TIMEOUT_MS = 14000;
 const CAPTURE_QUALITY = 0.8;
 const LIVENESS_LOG_PREFIX = '[liveness]';
+const EXPO_GO_UNSUPPORTED_MESSAGE = 'Liveness checks need a development build. Expo Go will keep the app running, but native face checks are unavailable.';
+
+declare const require: (id: string) => unknown;
 
 type UseLivenessVerificationArgs = {
   onVerified: () => Promise<void>;
 };
 
+type FaceDetectionResult = {
+  success?: boolean;
+  error?: unknown;
+  faces?: RNMLKitFace[];
+};
+
+type FaceDetector = {
+  initialize: () => Promise<void>;
+  detectFaces: (uri: string) => Promise<FaceDetectionResult>;
+};
+
+type FaceDetectionModule = {
+  useFaceDetection: () => FaceDetector;
+};
+
 export function useLivenessVerification({ onVerified }: UseLivenessVerificationArgs) {
-  const faceDetector = useFaceDetection();
+  const { faceDetector, unsupportedReason } = useOptionalFaceDetection();
   const cameraRef = useRef<CameraView | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const processingRef = useRef(false);
@@ -39,11 +58,12 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
   const [sequence, setSequence] = useState<LivenessChallenge[]>(DEFAULT_LIVENESS_SEQUENCE);
 
   const permissionGranted = permission?.granted === true;
-  const canStartVerification = permissionGranted && !starting && !isSessionActive;
+  const livenessSupported = Boolean(faceDetector);
+  const canStartVerification = livenessSupported && permissionGranted && !starting && !isSessionActive;
   const activeChallenge = sequence[challengeIndex];
   const challengeLabel = activeChallenge ? getChallengeInstruction(activeChallenge) : 'Keep still';
   const progressLabel = useMemo(() => `${Math.min(challengeIndex + 1, sequence.length)}/${sequence.length}`, [challengeIndex, sequence.length]);
-  const buttonLabel = starting ? 'Preparing...' : isSessionActive ? 'Verifying...' : 'Start Verification';
+  const buttonLabel = unsupportedReason ? 'Unavailable in Expo Go' : starting ? 'Preparing...' : isSessionActive ? 'Verifying...' : 'Start Verification';
 
   const logEvent = (event: string, details?: Record<string, unknown>) => {
     const stamp = new Date().toISOString();
@@ -93,7 +113,7 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
     const currentChallengeIndex = challengeIndexRef.current;
     const currentChallenge = currentSequence[currentChallengeIndex];
 
-    if (!sessionActiveRef.current || processingRef.current || !cameraRef.current || !currentChallenge) {
+    if (!faceDetector || !sessionActiveRef.current || processingRef.current || !cameraRef.current || !currentChallenge) {
       return;
     }
 
@@ -139,8 +159,10 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
         return;
       }
 
-      if (!hasAcceptableFaceCount(detection.faces)) {
-        logEvent('face_count_rejected', { challenge: currentChallenge, faceCount: detection.faces.length });
+      const faces = detection.faces ?? [];
+
+      if (!hasAcceptableFaceCount(faces)) {
+        logEvent('face_count_rejected', { challenge: currentChallenge, faceCount: faces.length });
         setStatusText('Make sure only one face is in frame');
         return;
       }
@@ -156,7 +178,7 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
         return;
       }
 
-      const face = detection.faces[0] ?? null;
+      const face = faces[0] ?? null;
       if (!face) {
         logEvent('no_single_face_after_filter');
         return;
@@ -217,6 +239,13 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
   };
 
   const startVerification = async () => {
+    if (!faceDetector) {
+      setFailureReason(unsupportedReason ?? 'Face detection is unavailable on this build.');
+      setStatusText('Use a development build for liveness checks');
+      logEvent('start_blocked_unavailable', { reason: unsupportedReason ?? null });
+      return;
+    }
+
     if (!permissionGranted || starting || isSessionActive) return;
 
     logEvent('start_requested', { permissionGranted, starting, isSessionActive });
@@ -264,6 +293,8 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
     isComplete,
     statusText,
     failureReason,
+    unsupportedReason,
+    livenessSupported,
     challengeLabel,
     progressLabel,
     buttonLabel,
@@ -271,6 +302,37 @@ export function useLivenessVerification({ onVerified }: UseLivenessVerificationA
     showProgress: isSessionActive,
     showRetry: Boolean(failureReason),
   };
+}
+
+function useOptionalFaceDetection(): { faceDetector: FaceDetector | null; unsupportedReason: string | null } {
+  if (Constants.appOwnership === 'expo') {
+    return {
+      faceDetector: null,
+      unsupportedReason: EXPO_GO_UNSUPPORTED_MESSAGE,
+    };
+  }
+
+  try {
+    const module = require('@infinitered/react-native-mlkit-face-detection') as Partial<FaceDetectionModule>;
+    const createFaceDetector = module.useFaceDetection;
+
+    if (!createFaceDetector) {
+      return {
+        faceDetector: null,
+        unsupportedReason: 'Face detection is not available in this build.',
+      };
+    }
+
+    return {
+      faceDetector: createFaceDetector(),
+      unsupportedReason: null,
+    };
+  } catch (error) {
+    return {
+      faceDetector: null,
+      unsupportedReason: `Face detection failed to load: ${toLogError(error)}`,
+    };
+  }
 }
 
 function shuffleChallenges(challenges: readonly LivenessChallenge[]): LivenessChallenge[] {
