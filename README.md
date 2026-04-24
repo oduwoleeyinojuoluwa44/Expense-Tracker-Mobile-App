@@ -1,77 +1,50 @@
-# Expense Tracker Mobile App
+# Welcome to your Expo app 👋
 
-React Native + Expo mobile app for tracking personal finances, modeled directly from the Figma design system for the project.
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Overview
+## Get started
 
-This app focuses on a premium finance experience with clean analytics, budget management, and ledger views.
+1. Install dependencies
 
-Implemented screens include:
+   ```bash
+   npm install
+   ```
 
-- Overview dashboard
-- Budgets & limits
-- Insights
-- Ledgers / expenses
-- Settings
-- Add transaction
-- Security verification
+2. Start the app
 
-## Design Source
+   ```bash
+   npx expo start
+   ```
 
-UI is implemented from the Figma file:
+In the output, you'll find options to open the app in a
 
-- `Expense-tracker-app--Community-`
-- File key: `IRCMly9Uedv7d5rOfyKpz8`
-- Budget section based on node: `11:3265`
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-The budget screen follows the Figma section structure and visual treatment (header, action row, category cards, savings card, and bottom nav).
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Tech Stack
+## Get a fresh project
 
-- Expo SDK 54
-- React 19 + React Native 0.81
-- Expo Router (file-based routing)
-- TypeScript
-- `expo-linear-gradient` for gradient surfaces/progress
-- `react-native-svg` for vector ring graphics
-- Google Fonts (`Inter`, `Manrope`)
-
-## Project Structure
-
-- `src/app/` route entry files
-- `src/screens/` screen containers
-- `src/components/figma/` reusable Figma-style UI components
-- `src/data/` screen data and content maps
-- `src/constants/figma.ts` design tokens and color constants
-
-## Run Locally
-
-1. Install dependencies:
+When you're ready, run:
 
 ```bash
-npm install
+npm run reset-project
 ```
 
-2. Start Expo:
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-```bash
-npx expo start
-```
+## Learn more
 
-3. Open on device:
+To learn more about developing your project with Expo, look at the following resources:
 
-- Scan QR code in Expo Go (SDK 54 compatible)
-- Or run emulator from Expo CLI options
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Available Scripts
+## Join the community
 
-- `npm run start` - start development server
-- `npm run android` - open Android target
-- `npm run ios` - open iOS target
-- `npm run web` - open web target
-- `npm run lint` - run lint checks
+Join our community of developers creating universal apps.
 
-## Notes
-
-- This repository is focused on matching the provided Figma visuals without placeholder tabs for missing screens.
-- Navigation items are only included when a corresponding working screen exists in the app.
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
