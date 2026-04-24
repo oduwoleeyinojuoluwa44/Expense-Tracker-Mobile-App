@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "saltz-expense-tracker",
-    "slug": "saltz-expense-tracker",
+    "name": "teo-expense-tracker",
+    "slug": "teo-expense-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "saltzexpensetracker",
+    "scheme": "teoexpensetracker",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.peliah.saltzexpensetracker"
+      "bundleIdentifier": "com.teo.expensetracker"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +25,7 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.peliah.saltzexpensetracker"
+      "package": "com.teo.expensetracker"
     },
     "web": {
       "output": "static",
@@ -49,7 +49,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Saltz to access your camera for identity verification."
+          "cameraPermission": "Allow TEO to access your camera for identity verification."
         }
       ]
     ],
@@ -63,6 +63,6 @@
         "projectId": "5ef73bc2-fcda-4051-a268-ccf4c65d817b"
       }
     },
-    "owner": "peliah"
+    "owner": "teo"
   }
 }

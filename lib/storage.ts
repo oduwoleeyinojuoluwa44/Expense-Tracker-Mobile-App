@@ -2,10 +2,10 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
 export const STORAGE_KEYS = {
-  AUTH_SETUP_COMPLETE: '@saltz/auth_setup_complete',
+  AUTH_SETUP_COMPLETE: '@teo/auth_setup_complete',
 } as const;
 
-const SECURE_AUTH_SETUP_KEY = 'saltz_auth_setup_complete';
+const SECURE_AUTH_SETUP_KEY = 'teo_auth_setup_complete';
 
 export const storage = {
   async getItem(key: string): Promise<string | null> {
