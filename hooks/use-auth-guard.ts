@@ -13,9 +13,9 @@ export function useAuthGuard() {
       return;
     }
 
-    const group = segments[0];
+    const group = segments[0] as string | undefined;
 
-    if (!isComplete && group === '(tabs)') {
+    if (!isComplete && (group === '(tabs)' || group === '(home)' || group === '(budgets)')) {
       router.replace('/(auth)/onboarding');
       return;
     }

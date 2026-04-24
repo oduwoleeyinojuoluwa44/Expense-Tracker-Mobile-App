@@ -1,5 +1,6 @@
 import { overviewStyles as styles } from '@/features/overview/styles/overview';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter, type Href } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
@@ -27,9 +28,9 @@ export type QuickActionOption = {
 };
 
 const DEFAULT_OPTIONS: QuickActionOption[] = [
-  { id: 'expense', label: 'Expense', icon: 'receipt-long' },
-  { id: 'transfer', label: 'Transfer', icon: 'swap-horiz' },
-  { id: 'scan', label: 'Scan', icon: 'qr-code-scanner' },
+  { id: 'manual', label: 'Manual', icon: 'receipt-long' },
+  { id: 'capture', label: 'Capture', icon: 'document-scanner' },
+  { id: 'upload', label: 'Upload Data', icon: 'upload-file' },
 ];
 
 function useFabSatelliteStyle(index: number, progress: SharedValue<number>) {
@@ -50,12 +51,13 @@ type QuickActionFabProps = {
 };
 
 export function QuickActionFab({ options = DEFAULT_OPTIONS }: QuickActionFabProps) {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const progress = useSharedValue(0);
   const [backdrop, setBackdrop] = useState(false);
 
   const rightOffset = 16;
-  const bottomOffset = insets.bottom - 16;
+  const bottomOffset = insets.bottom + 16;
 
   const close = useCallback(() => {
     progress.value = withTiming(0, { duration: 260 }, (finished) => {
@@ -114,7 +116,15 @@ export function QuickActionFab({ options = DEFAULT_OPTIONS }: QuickActionFabProp
               accessibilityRole="button"
               accessibilityLabel={opt.label}
               onPress={() => {
-                opt.onPress?.();
+                if (opt.onPress) {
+                  opt.onPress();
+                } else if (opt.id === 'manual') {
+                  router.push('/(home)/add-transaction?tab=manual' as Href);
+                } else if (opt.id === 'capture') {
+                  router.push('/(home)/add-transaction?tab=capture' as Href);
+                } else if (opt.id === 'upload') {
+                  router.push('/(home)/add-transaction?tab=upload' as Href);
+                }
                 close();
               }}
               style={styles.quickFabSatellite}

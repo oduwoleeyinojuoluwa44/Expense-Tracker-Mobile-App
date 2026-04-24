@@ -4,7 +4,7 @@ import { SettingsGroupsSection } from '@/features/settings/components/settings-g
 import { useAuthSetup } from '@/context/auth-setup';
 import { LedgerHeader } from '@/features/overview/components/ledger-header';
 import { settingsStyles as styles } from '@/features/settings/styles/settings';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -44,9 +44,7 @@ export default function SettingsScreen() {
           }}
         />
         <SettingsGroupsSection
-          onPressSecurityPin={() => Alert.alert('Security PIN', 'Open PIN update flow.')}
-          onPressUserPassword={() => Alert.alert('User Password', 'Open password update flow.')}
-          onPressTwoFactor={() => Alert.alert('Two-Factor', 'Two-factor setting updated.')}
+          onPressUserPassword={() => router.push('/(tabs)/change-password' as Href)}
           onPressCurrency={() => Alert.alert('Currency', 'Open currency selector.')}
           onPressLanguage={() => Alert.alert('Language', 'Open language selector.')}
           onPressHelpCenter={() => Alert.alert('Help Center', 'Opening FAQs and support.')}
