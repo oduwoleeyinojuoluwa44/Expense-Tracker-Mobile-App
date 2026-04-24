@@ -1,5 +1,7 @@
 import { budgetStyles as styles } from '@/features/budget/styles/budget';
+import type { BudgetCategory } from '@/features/budget/context/budget-categories';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import type { DimensionValue } from 'react-native';
 import { Pressable, Text, View } from 'react-native';
 
 type CategorySummaryItem = {
@@ -27,11 +29,14 @@ const CATEGORY_SUMMARY_ITEMS: CategorySummaryItem[] = [
 ];
 
 type CategorySummarySectionProps = {
+  categories?: BudgetCategory[];
   onPressViewAll?: () => void;
   onPressCategory?: (categoryId: string) => void;
 };
 
-export function CategorySummarySection({ onPressViewAll, onPressCategory }: CategorySummarySectionProps) {
+export function CategorySummarySection({ categories, onPressViewAll, onPressCategory }: CategorySummarySectionProps) {
+  const summaryItems = categories?.length ? categories.map(toSummaryItem) : CATEGORY_SUMMARY_ITEMS;
+
   return (
     <View style={styles.categorySummarySection}>
       <View style={styles.categorySummaryHeader}>
@@ -47,7 +52,7 @@ export function CategorySummarySection({ onPressViewAll, onPressCategory }: Cate
       </View>
 
       <View style={styles.categorySummaryList}>
-        {CATEGORY_SUMMARY_ITEMS.map((item) => (
+        {summaryItems.map((item) => (
           <Pressable
             key={item.id}
             accessibilityRole="button"
@@ -65,7 +70,7 @@ export function CategorySummarySection({ onPressViewAll, onPressCategory }: Cate
                 <View
                   style={[
                     styles.categorySummaryFill,
-                    { width: `${item.progress * 100}%` },
+                    { width: `${item.progress * 100}%` as DimensionValue },
                     item.tone === 'danger' ? styles.categorySummaryFillDanger : styles.categorySummaryFillPrimary,
                   ]}
                 />
@@ -82,4 +87,23 @@ export function CategorySummarySection({ onPressViewAll, onPressCategory }: Cate
       </View>
     </View>
   );
+}
+
+function toSummaryItem(category: BudgetCategory): CategorySummaryItem {
+  const remaining = Math.max(category.budget - category.spent, 0);
+  const progress = category.budget > 0 ? Math.min(category.spent / category.budget, 1) : 0;
+
+  return {
+    id: category.id,
+    name: category.name,
+    budget: formatMoney(category.budget),
+    left: `${formatMoney(remaining)} LEFT`,
+    icon: category.icon,
+    progress,
+    tone: progress > 0.75 ? 'danger' : 'primary',
+  };
+}
+
+function formatMoney(value: number) {
+  return `$${value.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 }

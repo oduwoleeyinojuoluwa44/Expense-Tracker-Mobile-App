@@ -5,10 +5,13 @@ import { QuickActionFab } from '@/features/overview/components/quick-action-fab'
 import { RecentLedgerSection } from '@/features/overview/components/recent-ledger-section';
 import { SpendingTrendCard } from '@/features/overview/components/spending-trend-card';
 import { overviewStyles as styles } from '@/features/overview/styles/overview';
+import { useRouter, type Href } from 'expo-router';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OverviewScreen() {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.overviewInner}>
@@ -20,7 +23,7 @@ export default function OverviewScreen() {
         >
           <LedgerHeader />
           <LiquidWealthSummaryCard />
-          <AllocationsSection />
+          <AllocationsSection onPressViewAll={() => router.push('/(home)/allocations' as Href)} />
           <SpendingTrendCard />
           <RecentLedgerSection />
 

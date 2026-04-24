@@ -1,5 +1,6 @@
 import { AuthNavigationSync } from '@/features/auth/components/auth-navigation-sync';
 import { AuthSetupProvider, useAuthSetup } from '@/context/auth-setup';
+import { BudgetCategoriesProvider } from '@/features/budget/context/budget-categories';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { manropeFonts } from '@/lib/fonts';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -46,7 +47,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthSetupProvider>
-        <RootStack />
+        <BudgetCategoriesProvider>
+          <RootStack />
+        </BudgetCategoriesProvider>
       </AuthSetupProvider>
     </GestureHandlerRootView>
   );

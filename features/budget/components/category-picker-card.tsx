@@ -1,7 +1,7 @@
 import { budgetStyles as styles } from '@/features/budget/styles/budget';
+import type { BudgetCategory } from '@/features/budget/context/budget-categories';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 type CategoryItem = {
@@ -11,7 +11,7 @@ type CategoryItem = {
   active?: boolean;
 };
 
-const CATEGORIES: CategoryItem[] = [
+const DEFAULT_CATEGORIES: CategoryItem[] = [
   { id: 'food', label: 'Food', icon: 'restaurant' },
   { id: 'travel', label: 'Travel', icon: 'flight' },
   { id: 'salary', label: 'Salary', icon: 'payments' },
@@ -21,12 +21,20 @@ const CATEGORIES: CategoryItem[] = [
 ];
 
 type CategoryPickerCardProps = {
+  categories?: BudgetCategory[];
+  selectedCategoryId?: string;
   onSelectCategory?: (categoryId: string) => void;
   onPressAddCategory?: () => void;
 };
 
-export function CategoryPickerCard({ onSelectCategory, onPressAddCategory }: CategoryPickerCardProps) {
-  const [activeCategoryId, setActiveCategoryId] = useState('food');
+export function CategoryPickerCard({ categories, selectedCategoryId = 'food', onSelectCategory, onPressAddCategory }: CategoryPickerCardProps) {
+  const pickerCategories = categories?.length
+    ? categories.map((category) => ({
+        id: category.id,
+        label: category.name,
+        icon: category.icon,
+      }))
+    : DEFAULT_CATEGORIES;
 
   return (
     <View style={styles.categorySection}>
@@ -38,30 +46,29 @@ export function CategoryPickerCard({ onSelectCategory, onPressAddCategory }: Cat
           contentContainerStyle={styles.categoryScrollerContent}
           style={styles.categoryScroller}
         >
-          {CATEGORIES.map((item) => (
+          {pickerCategories.map((item) => (
             <Pressable
               key={item.id}
               accessibilityRole="button"
               accessibilityLabel={item.label}
               onPress={() => {
-                setActiveCategoryId(item.id);
                 onSelectCategory?.(item.id);
               }}
               style={[
                 styles.categoryTile,
-                activeCategoryId === item.id ? styles.categoryTileActive : styles.categoryTileInactive,
+                selectedCategoryId === item.id ? styles.categoryTileActive : styles.categoryTileInactive,
               ]}
             >
               <MaterialIcons
                 name={item.icon}
                 size={20}
-                color={activeCategoryId === item.id ? '#00327D' : '#434653'}
+                color={selectedCategoryId === item.id ? '#00327D' : '#434653'}
                 style={styles.categoryTileIcon}
               />
               <Text
                 style={[
                   styles.categoryTileText,
-                  activeCategoryId === item.id ? styles.categoryTileTextActive : styles.categoryTileTextInactive,
+                  selectedCategoryId === item.id ? styles.categoryTileTextActive : styles.categoryTileTextInactive,
                 ]}
               >
                 {item.label}

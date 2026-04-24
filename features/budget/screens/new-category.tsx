@@ -1,9 +1,11 @@
+import { useBudgetCategories } from '@/features/budget/context/budget-categories';
 import { HomeTopHeader } from '@/features/home/components/home-top-header';
 import { TransactionKeypad } from '@/features/home/components/transaction-keypad';
 import { newCategoryStyles as styles } from '@/features/budget/styles/new-category';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function normalizeAmount(value: string) {
@@ -14,10 +16,33 @@ function normalizeAmount(value: string) {
 }
 
 export default function NewCategoryScreen() {
+  const router = useRouter();
+  const { addCategory } = useBudgetCategories();
   const [categoryName, setCategoryName] = useState('');
   const [notes, setNotes] = useState('');
   const [amount, setAmount] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const canSave = categoryName.trim().length > 0 && Number(amount) > 0 && !saving;
+
+  const onSaveCategory = async () => {
+    if (!canSave) {
+      setError('Add a category name and budget amount.');
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+    await addCategory({
+      name: categoryName,
+      notes,
+      budget: Number(amount),
+    });
+    setSaving(false);
+    router.replace('/(budgets)/categories');
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -27,11 +52,11 @@ export default function NewCategoryScreen() {
           <View style={styles.card}>
             <Text style={styles.label}>Category Name</Text>
             <View style={styles.inputWrap}>
-              <MaterialIcons name="person-outline" size={14} color="#74777F" />
+              <MaterialIcons name="category" size={14} color="#74777F" />
               <TextInput
                 value={categoryName}
                 onChangeText={setCategoryName}
-                placeholder="John Doe"
+                placeholder="Food, rent, travel..."
                 placeholderTextColor="#C4C6CF"
                 style={styles.input}
               />
@@ -78,17 +103,17 @@ export default function NewCategoryScreen() {
             <Pressable style={styles.continueButton} onPress={() => setShowKeypad(true)}>
               <Text style={styles.continueText}>Continue</Text>
             </Pressable>
+            {error ? <Text style={styles.continueText}>{error}</Text> : null}
           </View>
         </ScrollView>
 
         <View style={styles.actionBar}>
           <Pressable
             style={styles.primaryButton}
-            onPress={() => {
-              Alert.alert('Saved', 'New category saved.');
-            }}
+            onPress={onSaveCategory}
+            disabled={saving}
           >
-            <Text style={styles.primaryButtonText}>Save Up!</Text>
+            <Text style={styles.primaryButtonText}>{saving ? 'Saving...' : 'Save Up!'}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
