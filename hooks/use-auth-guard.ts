@@ -16,7 +16,7 @@ export function useAuthGuard() {
     const group = segments[0];
 
     if (!isComplete && group === '(tabs)') {
-      router.replace('/(auth)/create-account');
+      router.replace('/(auth)/onboarding');
       return;
     }
 
