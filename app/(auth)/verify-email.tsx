@@ -2,7 +2,7 @@ import { LoadingButton } from '@/components/shared/ui/loading-button';
 import { verifyEmailStyles as styles } from '@/stylesheets/verify-email-stylesheet';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function VerifyEmailScreen() {
@@ -24,29 +24,39 @@ export default function VerifyEmailScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Verify your email</Text>
-          <Text style={styles.subtitle}>
-            Enter the 6-digit code we sent to your inbox. This is a placeholder flow until email is wired up.
-          </Text>
+          <View style={styles.heroCard}>
+            <Text style={styles.eyebrow}>SETUP 02/04</Text>
+            <Text style={styles.title}>Verify your email</Text>
+            <Text style={styles.subtitle}>
+              Enter the six-digit code sent to your inbox to keep your TEO profile protected.
+            </Text>
+          </View>
 
-          <TextInput
-            style={styles.codeInput}
-            placeholder="000000"
-            placeholderTextColor="#94a3b8"
-            keyboardType="number-pad"
-            maxLength={6}
-            value={code}
-            onChangeText={setCode}
-          />
+          <View style={styles.formWrap}>
+            <Text style={styles.label}>Verification code</Text>
+            <TextInput
+              style={styles.codeInput}
+              placeholder="000000"
+              placeholderTextColor="#8ea1c0"
+              keyboardType="number-pad"
+              maxLength={6}
+              value={code}
+              onChangeText={setCode}
+            />
+            <Text style={styles.helperText}>Code expires in 10 minutes.</Text>
 
-          <LoadingButton
-            text="Verify and continue"
-            onPress={onContinue}
-            loading={busy}
-            disabled={code.trim().length < 6}
-          />
+            <LoadingButton
+              text="Verify and continue"
+              onPress={onContinue}
+              loading={busy}
+              disabled={code.trim().length < 6}
+              buttonStyle={{ backgroundColor: '#0051d5', borderRadius: 14 }}
+            />
 
-          <Text style={styles.resend}>Resend code</Text>
+            <Pressable style={styles.resendButton}>
+              <Text style={styles.resend}>Resend code</Text>
+            </Pressable>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

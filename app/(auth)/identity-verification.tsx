@@ -42,16 +42,16 @@ export default function IdentityVerificationScreen() {
             <View style={styles.headerIconWrap}>
               <MaterialIcons name="face" size={20} color="#001B3D" />
             </View>
-            <Text style={styles.title}>Identity Verification</Text>
+            <Text style={styles.title}>Verify your identity</Text>
             <Text style={styles.subtitle}>
-              We need to perform a quick liveness check{'\n'}to secure your account.
+              Quick liveness check for TEO security.{'\n'}This takes less than one minute.
             </Text>
           </View>
 
           <View style={styles.cameraArea}>
             <View style={styles.instructionToast}>
               <MaterialIcons name="info-outline" size={14} color="#0051D5" />
-              <Text style={styles.instructionText}>Center your face in the frame</Text>
+              <Text style={styles.instructionText}>Keep your face centered and well lit</Text>
             </View>
 
             <View style={styles.viewportOuter}>
@@ -90,7 +90,7 @@ export default function IdentityVerificationScreen() {
                 disabled={busy}
                 style={[styles.primaryButton, !busy && styles.primaryButtonReady]}
               >
-                <Text style={styles.primaryButtonText}>{busy ? 'Verifying...' : 'Start Verification'}</Text>
+                <Text style={styles.primaryButtonText}>{busy ? 'Verifying...' : 'Start verification'}</Text>
                 <MaterialIcons name="arrow-forward" size={12} color="#FFFFFF" />
               </Pressable>
             )}

@@ -25,46 +25,55 @@ export default function CreateAccountScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Create your account</Text>
-          <Text style={styles.subtitle}>Start tracking expenses with Saltz.</Text>
-
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="you@example.com"
-            placeholderTextColor="#94a3b8"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="At least 8 characters"
-            placeholderTextColor="#94a3b8"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <View style={{ marginTop: 12 }}>
-            <LoadingButton
-              text="Continue"
-              onPress={onContinue}
-              loading={busy}
-              disabled={!email.trim() || password.length < 8}
-            />
+          <View style={styles.heroCard}>
+            <Text style={styles.eyebrow}>SETUP 01/04</Text>
+            <Text style={styles.title}>Create your TEO ID</Text>
+            <Text style={styles.subtitle}>
+              This secures your workspace and links your budget intelligence across devices.
+            </Text>
           </View>
 
-          <Text style={styles.footerNote}>
-            Already have an account?{' '}
-            <Pressable onPress={() => router.push('/(auth)/identity-verification')}>
-              <Text style={{ fontFamily: 'Manrope-SemiBold', color: '#0d9488' }}>Continue setup</Text>
+          <View style={styles.formWrap}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="you@teo.app"
+              placeholderTextColor="#8ea1c0"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="At least 8 characters"
+              placeholderTextColor="#8ea1c0"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <Text style={styles.helperText}>Use letters, numbers, and one symbol for better security.</Text>
+
+            <View style={{ marginTop: 8 }}>
+              <LoadingButton
+                text="Continue to email verify"
+                onPress={onContinue}
+                loading={busy}
+                disabled={!email.trim() || password.length < 8}
+                buttonStyle={{ backgroundColor: '#0051d5', borderRadius: 14 }}
+              />
+            </View>
+          </View>
+
+          <View style={styles.footerRow}>
+            <Text style={styles.footerNote}>Already started setup?</Text>
+            <Pressable onPress={() => router.push('/(auth)/verify-email')}>
+              <Text style={styles.footerLink}>Verify code</Text>
             </Pressable>
-          </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

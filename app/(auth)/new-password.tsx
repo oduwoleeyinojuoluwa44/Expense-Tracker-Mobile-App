@@ -30,32 +30,57 @@ export default function NewPasswordScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Create a new password</Text>
-          <Text style={styles.subtitle}>Use a strong password you have not used elsewhere.</Text>
+          <View style={styles.heroCard}>
+            <Text style={styles.eyebrow}>SETUP 04/04</Text>
+            <Text style={styles.title}>Set your vault key</Text>
+            <Text style={styles.subtitle}>
+              Final step. This password protects access to your TEO finance workspace.
+            </Text>
+          </View>
 
-          <Text style={styles.label}>New password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter password"
-            placeholderTextColor="#94a3b8"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Text style={styles.hint}>At least 8 characters.</Text>
+          <View style={styles.formWrap}>
+            <Text style={styles.label}>New password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter password"
+              placeholderTextColor="#8ea1c0"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <Text style={styles.hintTitle}>Strong password checklist</Text>
+            <View style={styles.ruleRow}>
+              <View style={styles.rulePill}>
+                <Text style={styles.rulePillText}>8+ chars</Text>
+              </View>
+              <View style={styles.rulePill}>
+                <Text style={styles.rulePillText}>1 symbol</Text>
+              </View>
+              <View style={styles.rulePill}>
+                <Text style={styles.rulePillText}>1 number</Text>
+              </View>
+            </View>
+            <Text style={styles.hint}>Avoid reusing old passwords.</Text>
 
-          <Text style={styles.label}>Confirm password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Re-enter password"
-            placeholderTextColor="#94a3b8"
-            secureTextEntry
-            value={confirm}
-            onChangeText={setConfirm}
-          />
+            <Text style={styles.label}>Confirm password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Re-enter password"
+              placeholderTextColor="#8ea1c0"
+              secureTextEntry
+              value={confirm}
+              onChangeText={setConfirm}
+            />
 
-          <View style={{ marginTop: 12 }}>
-            <LoadingButton text="Finish and go to app" onPress={onFinish} loading={busy} disabled={disabled} />
+            <View style={{ marginTop: 8 }}>
+              <LoadingButton
+                text="Finish and open TEO"
+                onPress={onFinish}
+                loading={busy}
+                disabled={disabled}
+                buttonStyle={{ backgroundColor: '#0051d5', borderRadius: 14 }}
+              />
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
